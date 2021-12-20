@@ -1,9 +1,12 @@
-// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors, avoid_print
+// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors, avoid_print, curly_braces_in_flow_control_structures, avoid_unnecessary_containers
 
 import 'package:flutter/material.dart';
 import 'package:movieapp/api/networkservice/movie_api.dart';
+import 'package:movieapp/bloc/searchmovie_bloc.dart';
 import 'package:movieapp/themes/themedata.dart';
 import 'package:movieapp/widgets/movie_widget.dart';
+import 'package:bloc/bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({Key? key}) : super(key: key);
@@ -37,7 +40,30 @@ class _SearchPageState extends State<SearchPage> {
           body: Column(
             children: [
               buildSearchBar(),
-              movieCard(context),
+              BlocBuilder<SearchmovieBloc, SearchmovieState>(
+                builder: (context, state) {
+                  if (state is MovieSearching)
+                    return Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  if (state is MoviesLoaded)
+                    return movieCard(context, state.movieSearched);
+
+                  if (state is MovieNotFound)
+                    return Container(
+                        child: Center(
+                      child: Text(
+                        "Movie Not Found",
+                        style: TextStyle(color: whiteColor, fontSize: 20),
+                      ),
+                    ));
+                  return Container(
+                    child: Center(
+                      child: Text("Search Movies"),
+                    ),
+                  );
+                },
+              ),
             ],
           ),
         ),
@@ -64,7 +90,6 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   Widget buildSearchBar() {
-    final NetworkService _netWork = NetworkService();
     final inputBorder = OutlineInputBorder(
       borderSide: BorderSide(
         color: whiteColor,
@@ -79,9 +104,9 @@ class _SearchPageState extends State<SearchPage> {
         keyboardType: TextInputType.name,
         style: TextStyle(color: Colors.white.withOpacity(0.8)),
         onSubmitted: (text) async {
-          print(await _netWork.getMovieDetails(text, tryingNum: 0));
+          BlocProvider.of<SearchmovieBloc>(context)
+              .add(SearchButtonPressed(text));
         },
-        // onChanged: onNameSearched,
         autofocus: true,
         decoration: InputDecoration(
             fillColor: Color(0xFF453954),
@@ -101,7 +126,11 @@ class _SearchPageState extends State<SearchPage> {
               ),
             ),
             suffixIcon: GestureDetector(
-              onTap: () {},
+              onTap: () {
+                searchTextController.clear();
+                BlocProvider.of<SearchmovieBloc>(context)
+                    .add(SearchClearedEvent());
+              },
               child: Padding(
                 padding: const EdgeInsets.all(13.0),
                 child: Image.asset(
@@ -116,5 +145,3 @@ class _SearchPageState extends State<SearchPage> {
     );
   }
 }
-
-void onSearched(String text) {}

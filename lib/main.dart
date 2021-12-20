@@ -1,6 +1,8 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:movieapp/bloc/searchmovie_bloc.dart';
 import 'package:movieapp/pages/search_page.dart';
 import 'package:movieapp/themes/themedata.dart';
 
@@ -15,7 +17,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: darkTheme,
-      home: SearchPage(),
+      home: BlocProvider(
+        create: (context) => SearchmovieBloc(),
+        child: SearchPage(),
+      ),
     );
   }
 }

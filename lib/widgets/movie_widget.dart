@@ -7,7 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:movieapp/models/movie.dart';
 import 'package:movieapp/themes/themedata.dart';
 
-Widget movieCard(context) {
+Widget movieCard(context, Movie movieSearched) {
   return Container(
     padding: EdgeInsets.symmetric(vertical: 25, horizontal: 15),
     child: Column(
@@ -24,7 +24,7 @@ Widget movieCard(context) {
                   child: FadeInImage(
                     fit: BoxFit.fitWidth,
                     image: CachedNetworkImageProvider(
-                      "https://m.media-amazon.com/images/M/MV5BNDYxNjQyMjAtNTdiOS00NGYwLWFmNTAtNThmYjU5ZGI2YTI1XkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_SX300.jpg",
+                      movieSearched.imageUrl,
                     ),
                     placeholder: AssetImage('assets/loading3.gif'),
                     imageErrorBuilder: (c, o, s) =>
@@ -40,13 +40,15 @@ Widget movieCard(context) {
                 child: ClipRRect(
                   borderRadius: BorderRadius.all(Radius.circular(10)),
                   child: Container(
-                    color: Colors.black.withAlpha(200),
+                    color: Colors.black.withAlpha(150),
                     padding: EdgeInsets.all(5),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         Icon(Icons.star_rate_rounded),
-                        Text("8.4/10"),
+                        Text(movieSearched
+                                .ratings.ratings["Internet Movie Database"] ??
+                            ""),
                       ],
                     ),
                   ),
@@ -58,7 +60,7 @@ Widget movieCard(context) {
         Padding(
             padding: EdgeInsets.only(top: 10, left: 20),
             child: Text(
-              "Avengers",
+              movieSearched.title,
               style: GoogleFonts.montserrat(color: whiteColor, fontSize: 20),
             )),
         Padding(
@@ -74,7 +76,7 @@ Widget movieCard(context) {
                   width: 10,
                 ),
                 Text(
-                  "2 hours 1 minute",
+                  movieSearched.runTime,
                   style:
                       GoogleFonts.montserrat(color: Colors.amber, fontSize: 15),
                 ),

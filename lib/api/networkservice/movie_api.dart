@@ -7,7 +7,7 @@ class NetworkService {
   final String apiKey = "c2f1e49e";
   final String apiUrl = "https://www.omdbapi.com/?";
 
-  Future<String> getMovieDetails(String title, {required int tryingNum}) async {
+  Future<String> apiCall(String title, {required int tryingNum}) async {
     try {
       var url = Uri.parse('$apiUrl' + 't=' + title + "&apikey=$apiKey");
       print(url);
@@ -21,7 +21,7 @@ class NetworkService {
       print('Error - ${e.toString()}');
       if (tryingNum < 3) {
         await Future.delayed(const Duration(seconds: 1), () {});
-        return await getMovieDetails(title, tryingNum: tryingNum + 1);
+        return await apiCall(title, tryingNum: tryingNum + 1);
       }
       if (e is SocketException) {
         print('Error - ${e.toString()}');

@@ -24,6 +24,7 @@ class Movie {
   String imageUrl;
   String imdbRating;
   String imdbID;
+  String genre;
 
   MovieRatings ratings;
 
@@ -42,6 +43,7 @@ class Movie {
       required this.imageUrl,
       required this.ratings,
       required this.imdbRating,
+      required this.genre,
       required this.imdbID});
 
   factory Movie.fromJson(dynamic input) {
@@ -63,6 +65,7 @@ class Movie {
         country: input["Country"] ?? "",
         imageUrl: input["Poster"] ?? "",
         imdbID: input["imdbID"],
+        genre: input["Genre"],
         imdbRating: input["imdbRating"] ?? "",
         ratings: ratings);
   }

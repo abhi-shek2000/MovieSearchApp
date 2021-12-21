@@ -7,21 +7,44 @@ class NetworkService {
   final String apiKey = "c2f1e49e";
   final String apiUrl = "https://www.omdbapi.com/?";
 
-  Future<String> apiCall(String title, {required int tryingNum}) async {
+  Future<String> searchMoviesapiCall(String title,
+      {required int tryingNum}) async {
     try {
-      var url = Uri.parse('$apiUrl' + 't=' + title + "&apikey=$apiKey");
+      var url = Uri.parse('$apiUrl' + 's=' + title + "&apikey=$apiKey");
       print(url);
       var response = await http.get(url);
 
       if (response.statusCode == 200) {
-        // return jsonDecode(response.body);
         return response.body;
       }
     } catch (e) {
       print('Error - ${e.toString()}');
       if (tryingNum < 3) {
         await Future.delayed(const Duration(seconds: 1), () {});
-        return await apiCall(title, tryingNum: tryingNum + 1);
+        return await searchMoviesapiCall(title, tryingNum: tryingNum + 1);
+      }
+      if (e is SocketException) {
+        print('Error - ${e.toString()}');
+      }
+    }
+    return "";
+  }
+
+  Future<String> searchbyImdbapiCall(String imdbID,
+      {required int tryingNum}) async {
+    try {
+      var url = Uri.parse('$apiUrl' + 'i=' + imdbID + "&apikey=$apiKey");
+      print(url);
+      var response = await http.get(url);
+
+      if (response.statusCode == 200) {
+        return response.body;
+      }
+    } catch (e) {
+      print('Error - ${e.toString()}');
+      if (tryingNum < 3) {
+        await Future.delayed(const Duration(seconds: 1), () {});
+        return await searchMoviesapiCall(imdbID, tryingNum: tryingNum + 1);
       }
       if (e is SocketException) {
         print('Error - ${e.toString()}');

@@ -5,6 +5,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:movieapp/models/movie.dart';
+import 'package:movieapp/models/movie_short.dart';
 import 'package:movieapp/themes/themedata.dart';
 
 Widget movieCard(context, Movie movieSearched) {
@@ -46,9 +47,7 @@ Widget movieCard(context, Movie movieSearched) {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         Icon(Icons.star_rate_rounded),
-                        Text(movieSearched
-                                .ratings.ratings["Internet Movie Database"] ??
-                            ""),
+                        Text("${movieSearched.imdbRating}/10"),
                       ],
                     ),
                   ),
@@ -76,7 +75,7 @@ Widget movieCard(context, Movie movieSearched) {
                   width: 10,
                 ),
                 Text(
-                  movieSearched.runTime,
+                  "${movieSearched.runTime}",
                   style:
                       GoogleFonts.montserrat(color: Colors.amber, fontSize: 15),
                 ),

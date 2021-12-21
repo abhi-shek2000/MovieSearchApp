@@ -10,7 +10,7 @@ class SearchmovieInitials extends SearchmovieState {}
 class MovieSearching extends SearchmovieState {}
 
 class MoviesLoaded extends SearchmovieState {
-  Movie movieSearched;
+  List<MovieInShort> movieSearched;
   MoviesLoaded(this.movieSearched);
 }
 

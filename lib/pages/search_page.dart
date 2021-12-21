@@ -1,8 +1,10 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors, avoid_print, curly_braces_in_flow_control_structures, avoid_unnecessary_containers
 
 import 'package:flutter/material.dart';
+import 'package:movieapp/api/movie_search_repository/movie_search.dart';
 import 'package:movieapp/api/networkservice/movie_api.dart';
 import 'package:movieapp/bloc/searchmovie_bloc.dart';
+import 'package:movieapp/models/movie.dart';
 import 'package:movieapp/themes/themedata.dart';
 import 'package:movieapp/widgets/movie_widget.dart';
 import 'package:bloc/bloc.dart';
@@ -32,43 +34,75 @@ class _SearchPageState extends State<SearchPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        backgroudImage(),
-        Scaffold(
-          backgroundColor: Colors.transparent,
-          body: Column(
-            children: [
-              buildSearchBar(),
-              BlocBuilder<SearchmovieBloc, SearchmovieState>(
-                builder: (context, state) {
-                  if (state is MovieSearching)
-                    return Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  if (state is MoviesLoaded)
-                    return movieCard(context, state.movieSearched);
+    return Stack(children: [
+      backgroudImage(),
+      Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Column(
+          children: [
+            buildSearchBar(),
+            BlocBuilder<SearchmovieBloc, SearchmovieState>(
+              builder: (context, state) {
+                if (state is MovieSearching)
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
 
-                  if (state is MovieNotFound)
-                    return Container(
-                        child: Center(
-                      child: Text(
-                        "Movie Not Found",
-                        style: TextStyle(color: whiteColor, fontSize: 20),
-                      ),
-                    ));
-                  return Container(
-                    child: Center(
-                      child: Text("Search Movies"),
+                if (state is MoviesLoaded) {
+                  return Expanded(
+                    child: ListView.builder(
+                      itemCount: state.movieSearched.length,
+                      itemBuilder: (context, index) {
+                        if (state.movieSearched[index].imdbID != "")
+                          return FutureBuilder(
+                              future: MovieSearch.searchbyImdbID(
+                                  state.movieSearched[index].imdbID),
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Container(
+                                      height: 100,
+                                      color: containerColor,
+                                      child: Center(
+                                        child: CircularProgressIndicator(),
+                                      ),
+                                    ),
+                                  );
+                                }
+
+                                if (snapshot.hasData) {
+                                  if (snapshot.data != null) {
+                                    return movieCard(
+                                        context, snapshot.data as Movie);
+                                  }
+                                }
+
+                                return Container();
+                              });
+                        return Container();
+                      },
                     ),
                   );
-                },
-              ),
-            ],
-          ),
+                }
+
+                if (state is MovieNotFound)
+                  return Container(
+                      child: Center(
+                    child: Text(
+                      "Movie Not Found",
+                      style: TextStyle(color: whiteColor, fontSize: 20),
+                    ),
+                  ));
+
+                return Container();
+              },
+            ),
+          ],
         ),
-      ],
-    );
+      ),
+    ]);
   }
 
   Widget backgroudImage() {
